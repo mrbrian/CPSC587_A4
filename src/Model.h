@@ -1,7 +1,6 @@
 #include <vector>
 #include <random>
-#include "glad\glad.h"
-#include "glm\common.hpp"
+#include "Boid.h"
 
 class Model
 {
@@ -15,6 +14,8 @@ public:
 		return (2.0 * m_URD(MersenneTwisterPRNG) - 1.0);    // [-1,1]
 	}
 
+
+    std::vector<Boid> boids;
     virtual void init();
     virtual void render();
 	virtual void update(float dt);

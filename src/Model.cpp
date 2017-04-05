@@ -12,6 +12,12 @@ void Model::init()
 
 void Model::update(float dt)
 {
+    for (int i = 0; i < boids.size(); i++)
+    {
+        Boid b = boids[i];
+
+        //b.update();
+    }
 }
 
 void Model::read_input()
@@ -27,9 +33,17 @@ void Model::read_input()
 	float w_follow;
 	float w_match;
 
-	std::cin >> w_avoid;
-	std::cin >> w_follow;
-	std::cin >> w_match;
+    float r_avoid;
+    float r_follow;
+    float r_match;
+
+    std::cin >> w_avoid;
+    std::cin >> w_follow;
+    std::cin >> w_match;
+
+    std::cin >> r_avoid;
+    std::cin >> r_follow;
+    std::cin >> r_match;
 
 	file.close();
 }
