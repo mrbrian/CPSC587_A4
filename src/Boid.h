@@ -8,19 +8,23 @@
 class Boid
 {
 public:
-	Boid();
 
 	Vec3f pos;
     Vec3f vel;
 
     Vec3f color;
-    float linear_weight(Boid *b, Behaviour *bhvr);
-    void update(std::vector<Boid*> *boids, Behaviour *bhvr);
 
-    /*
-    void following();
-    void avoid();
-    void velocity();
+	Boid();
+	Boid(Vec3f p, Vec3f v);
+
+	float linear_weight(Boid * b, float r_inner, float r_outer);
+	Vec3f calc_heading(std::vector<Boid*> *boids, Behaviour *bhvr);
+	void update(std::vector<Boid*> *boids, Behaviour *bhvr);
+
+	Vec3f following(Boid *b);
+	Vec3f avoid(Boid *b);
+	Vec3f velocity(Boid *b);
+	/*
     void render();
     void load();
     void updateGPU();

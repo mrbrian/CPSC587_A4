@@ -11,6 +11,26 @@ public:
     float weight_a;
     float weight_f;
     float weight_v;
+
+	float fov; // radian
+
+	Behaviour(float ra,
+		float rf,
+		float rv,
+		float wa,
+		float wf,
+		float wv,
+		float fv)
+	{
+		rad_a = ra;
+		rad_f = rf;
+		rad_v = rv;
+		weight_a = wa;
+		weight_f = wf;
+		weight_v = wv;
+
+		fov = fv;
+	}
 };
 
 #endif // BEHAVIOUR_H

@@ -35,7 +35,8 @@ void Model::read_input()
 
     float r_avoid;
     float r_follow;
-    float r_match;
+	float r_match;
+	float v_range;
 
     std::cin >> w_avoid;
     std::cin >> w_follow;
@@ -43,7 +44,19 @@ void Model::read_input()
 
     std::cin >> r_avoid;
     std::cin >> r_follow;
-    std::cin >> r_match;
+	std::cin >> r_match;
+
+	std::cin >> v_range;
+
+	Behaviour b = Behaviour();
+
+	b.weight_f = w_follow;
+	b.weight_v = w_match;
+	b.weight_a = w_avoid;
+
+	b.rad_a = r_avoid;
+	b.rad_v = r_match;
+	b.rad_f = r_follow;
 
 	file.close();
 }
