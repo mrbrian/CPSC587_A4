@@ -5,9 +5,10 @@
 
 void Model1::init()
 {
-	Model::Model();
+    Model();
 
-	for (int i = 0; i < 3; i++)
+    bhvr = read_input();
+    for (int i = 0; i < bhvr.num_boids; i++)
 	{
 		Boid *a = new Boid(
 			Vec3f(RAND_1(), RAND_1(), RAND_1()),
@@ -21,14 +22,11 @@ void Model1::init()
 		Boid &b = *boids[i];
 		b.load();
 	}
+
 }
 
 Model::Model()
 {
-	bhvr = Behaviour(
-		1, 2, 3,
-		3, 2, 1, 
-		160);
 	init();
 }
 
@@ -56,14 +54,17 @@ void Model::update(float dt)
     }
 }
 
-void Model::read_input()
+Behaviour Model::read_input()
 {	
-	std::fstream file;
-	int num_boids;
+    std::fstream file;
+    int num_boids;
+    int num_objs;
 
-	file.open("example.txt");
-
-	std::cin >> num_boids;
+    file.open("input.txt");
+    if (!file.is_open())
+        return Behaviour();
+    file >> num_boids;
+    file >> num_objs;
 
 	float w_avoid;
 	float w_follow;
@@ -74,17 +75,21 @@ void Model::read_input()
 	float r_match;
 	float fov;
 
-    std::cin >> w_avoid;
-    std::cin >> w_follow;
-    std::cin >> w_match;
+    file >> w_avoid;
+    file >> w_follow;
+    file >> w_match;
 
-    std::cin >> r_avoid;
-    std::cin >> r_follow;
-	std::cin >> r_match;
+    file >> r_avoid;
+    file >> r_follow;
+    file >> r_match;
 
-	std::cin >> fov;
+    file >> fov;
 
-	Behaviour b = Behaviour(
+    file.close();
+
+    return Behaviour(
+        num_boids,
+        num_objs,
 		r_avoid, 
 		r_follow, 
 		r_match,
@@ -94,7 +99,5 @@ void Model::read_input()
 		w_match,
 
 		fov
-		);
-
-	file.close();
+    );
 }

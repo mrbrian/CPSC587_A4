@@ -9,7 +9,6 @@
 class Boid
 {
 public:
-
 	Vec3f pos;
     Vec3f vel;
 
@@ -37,3 +36,4 @@ public:
     GLuint vaoID;
 };
 
+extern void reloadColorUniform(float r, float g, float b);

@@ -19,7 +19,7 @@ public:
 	}
 
 	Model();
-	void read_input();
+    Behaviour read_input();
     virtual void init();
     virtual void render();
 	virtual void update(float dt);

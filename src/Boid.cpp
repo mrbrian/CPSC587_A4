@@ -15,7 +15,7 @@ Boid::Boid()
 
 Boid::Boid(Vec3f p, Vec3f v)
 {
-	Boid::Boid();
+    Boid();
 	transform = Mat4f({
 		1,0,0,0,
 		0,1,0,0,
@@ -38,6 +38,8 @@ Vec3f Boid::following(Boid *b, Behaviour *bhvr)
 {
 	Vec3f dir = b->pos - pos;
 	float w = linear_weight(b, bhvr->rad_a, bhvr->rad_f);
+    color[1] = w;
+
 	return dir * w;
 }
 
@@ -46,6 +48,8 @@ Vec3f Boid::avoid(Boid *b, Behaviour *bhvr)
 	Vec3f result = pos - b->pos;
 	float w = pow(1 - linear_weight(b, 0, bhvr->rad_a), 2);
 	result.normalize();
+
+    color[0] = w;
 	return result * w;
 }
 
@@ -54,7 +58,8 @@ Vec3f Boid::velocity(Boid *b, Behaviour *bhvr)
 	Vec3f dir = b->vel - pos;
 	float w = linear_weight(b, bhvr->rad_a, bhvr->rad_v);
 
-	return b->vel * w;
+    color[2] = w;
+    return b->vel * w;
 }
 
 bool within_radius(Boid *a, Boid *b, float r)
@@ -114,7 +119,7 @@ Vec3f Boid::calc_heading(std::vector<Boid*> *boids, Behaviour *bhvr)
 
 	h_f = h_f - pos;
 
-	Vec3f h = a_a * h_a + a_f * h_f + a_v * (h_v - v);
+    Vec3f h = a_a * h_a + a_f * h_f + a_v * (h_v - v);
 	return h;
 }
 
@@ -148,7 +153,8 @@ void Boid::render()
 	updateGPU();
 
 	// Draw Quads, start at vertex 0, draw 4 of them (for a quad)
-	//reloadColorUniform(1, 1, 0);
+    color.normalize();
+    reloadColorUniform(color.x(), color.y(), color.z());
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 	glBindVertexArray(0);
 }
@@ -164,15 +170,16 @@ void Boid::load()
 
 void Boid::updateGPU()
 {
+    float scale = 0.25f;
 	Vec3f verts[3] = {
-		Vec3f(-1 / sqrt(2),0,-1 / sqrt(2)),
-		Vec3f(0, 0, 1),
-		Vec3f(1 / sqrt(2),0,-1 / sqrt(2))
+        Vec3f(-1 / sqrt(2),0,-1 / sqrt(2)) * scale,
+        Vec3f(0, 0, 1) * scale ,
+        Vec3f(1 / sqrt(2),0,-1 / sqrt(2)) * scale
 	};
 
 	for (int i = 0; i < 3; i++)
 	{
-		verts[i] = transform * verts[i];
+        verts[i] = transform * verts[i];
 	}
 	//upload to gpu
 	glBindBuffer(GL_ARRAY_BUFFER, vertBufferID);

@@ -19,6 +19,7 @@ HEADERS += include/Camera.h \
     middleware/glad/include/glad/glad.h \
     middleware/glad/include/KHR/khrplatform.h \
     src/Model.h \
+    src/Obstacle.h \
     src/Boid.h \
     src/Behaviour.h
 SOURCES += src/Camera.cpp \
@@ -27,6 +28,7 @@ SOURCES += src/Camera.cpp \
            src/OpenGLMatrixTools.cpp \
            src/Quat4f.cpp \
            src/ShaderTools.cpp \
+           src/Obstacle.cpp \
            src/Vec3f.cpp \
            middleware/glad/src/glad.c \
     src/Model.cpp \

@@ -12,4 +12,22 @@ void Sphere::render()
 
 void Sphere::load()
 {
+    int max_phi = 0;
+    int max_theta = 0;
+    int radius = 1;
+/*
+    for (int i = 0; i < max_phi; i++)
+    {
+        for (int  = 0; i < max_phi; i++)
+        {
+            for (int i = 0; i < max_phi; i++)
+            {
+
+            }
+        }
+    }*/
+}
+
+void Sphere::updateGPU()
+{
 }

@@ -4,6 +4,8 @@
 class Behaviour
 {
 public:
+    int num_boids;
+    int num_objs;
     float rad_a;
     float rad_f;
     float rad_v;
@@ -16,15 +18,22 @@ public:
 
 	Behaviour() {}
 
-	Behaviour(float ra,
+    Behaviour(
+        int num_b,
+        int num_o,
+        float ra,
 		float rf,
 		float rv,
 		float wa,
 		float wf,
 		float wv,
 		float fv)
-	{
-		rad_a = ra;
+    {
+
+        num_boids = num_b;
+        num_objs = num_o;
+        rad_a = ra;
+
 		rad_f = rf;
 		rad_v = rv;
 		weight_a = wa;
