@@ -22,4 +22,3 @@ public:
 	void load() override;
 	void updateGPU() override;
 };
-
