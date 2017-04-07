@@ -1,4 +1,5 @@
 #include "Obstacle.h"
+#include <vector>
 
 Vec3f Sphere::nearest_point(Vec3f pt) 
 {
@@ -12,20 +13,19 @@ void Sphere::render()
 
 void Sphere::load()
 {
-    int max_phi = 0;
-    int max_theta = 0;
+    int num_phi = 8;
+    int num_theta = 8;
     int radius = 1;
-/*
-    for (int i = 0; i < max_phi; i++)
-    {
-        for (int  = 0; i < max_phi; i++)
-        {
-            for (int i = 0; i < max_phi; i++)
-            {
 
-            }
+    std::vector<Vec3f> verts;
+
+    for (int i = 0; i < num_phi; i++)
+    {
+        for (int j = 0; j < num_theta; j++)
+        {
+            //verts.push_back();
         }
-    }*/
+    }
 }
 
 void Sphere::updateGPU()
