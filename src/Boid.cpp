@@ -56,7 +56,7 @@ Vec3f Boid::avoid(Boid *b, Behaviour *bhvr)
 Vec3f Boid::velocity(Boid *b, Behaviour *bhvr)
 {
 	Vec3f dir = b->vel - pos;
-	float w = linear_weight(b, bhvr->rad_a, bhvr->rad_v);
+    float w = linear_weight(b, bhvr->rad_f, bhvr->rad_v);
 
     color[2] = w;
     return b->vel * w;

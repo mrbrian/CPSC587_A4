@@ -385,25 +385,26 @@ int main(int argc, char **argv) {
   init(); // our own initialize stuff func
 
   float t = 0;
-  int updates_per_frame = 100;
 
   double targ_elapsed = 1.0f / 60;
   double curr_time = glfwGetTime();
   double last_time = glfwGetTime() - targ_elapsed;
 
+  int frame = 0;
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
 	  !glfwWindowShouldClose(window)) {
 	  curr_time = glfwGetTime();
 	  if (curr_time - last_time >= targ_elapsed)
 	  {
 		  if (g_play) {
-			  for (int i = 0; i < updates_per_frame; i++)
-				m->update(targ_elapsed / updates_per_frame * g_play_speed);
+                m->update(targ_elapsed *  g_play_speed);
+                frame++;
+                printf("%d\n", frame);
 		  }
 
 		  last_time = curr_time;
 	  }
-	  displayFunc();
+      displayFunc();
 	  moveCamera();
 	  glfwSwapBuffers(window);
 	  glfwPollEvents();
