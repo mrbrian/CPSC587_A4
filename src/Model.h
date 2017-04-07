@@ -1,6 +1,7 @@
 #include <vector>
 #include <random>
 #include "Boid.h"
+#include "Obstacle.h"
 
 class Model
 {
@@ -9,6 +10,7 @@ public:
 	std::uniform_real_distribution<double> m_URD;	
 
 	std::vector<Boid*> boids;
+	std::vector<Obstacle*> objects;
 	Behaviour bhvr;
 
 	double RAND_1()
