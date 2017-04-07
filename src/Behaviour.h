@@ -14,6 +14,8 @@ public:
 
 	float fov; // radian
 
+	Behaviour() {}
+
 	Behaviour(float ra,
 		float rf,
 		float rv,

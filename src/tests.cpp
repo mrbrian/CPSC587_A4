@@ -14,7 +14,7 @@ void test_create()
 		Vec3f(0,0,0), 
 		Vec3f(0,0,1));
 	Boid b = Boid(
-		Vec3f(1, 0, -1),
+		Vec3f(1.5f, 0, 0),
 		Vec3f(0, 0, 1));
 	boids.push_back(&a);
 	boids.push_back(&b);

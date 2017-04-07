@@ -5,21 +5,28 @@
 class Model
 {
 public:
-
 	std::mt19937 MersenneTwisterPRNG;
 	std::uniform_real_distribution<double> m_URD;	
+
+	std::vector<Boid*> boids;
+	Behaviour bhvr;
 
 	double RAND_1()
 	{
 		return (2.0 * m_URD(MersenneTwisterPRNG) - 1.0);    // [-1,1]
 	}
 
-
-    std::vector<Boid> boids;
+	Model();
+	void read_input();
     virtual void init();
     virtual void render();
 	virtual void update(float dt);
-	void read_input();
+};
+
+class Model1 : public Model
+{
+public:
+	void init() override;
 };
 
 struct Face

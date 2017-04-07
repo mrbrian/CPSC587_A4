@@ -336,7 +336,7 @@ void initModel()
     switch (g_model)
     {
     default:		
-        m = new Model();
+        m = new Model1();
         break;
     }
     m->init();

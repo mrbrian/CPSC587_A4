@@ -2,8 +2,42 @@
 #include <fstream>
 #include "Model.h"
 
+
+void Model1::init()
+{
+	Model::Model();
+	
+	Boid *a = new Boid(
+		Vec3f(0,0,0),
+		Vec3f(0,0,1)
+	);
+
+	boids.push_back(a);
+
+	for (int i = 0; i < boids.size(); i++)
+	{
+		Boid &b = *boids[i];
+		b.load();
+	}
+}
+
+Model::Model()
+{
+	bhvr = Behaviour(
+		1, 2, 3,
+		3, 2, 1, 
+		160);
+	init();
+}
+
 void Model::render()
 {
+	for (int i = 0; i < boids.size(); i++)
+	{
+		Boid &b = *boids[i];
+
+		b.render();
+	}
 }
 
 void Model::init()
@@ -14,9 +48,9 @@ void Model::update(float dt)
 {
     for (int i = 0; i < boids.size(); i++)
     {
-        Boid b = boids[i];
+        Boid &b = *boids[i];
 
-        //b.update();
+        b.update(&boids, &bhvr, dt);
     }
 }
 
@@ -36,7 +70,7 @@ void Model::read_input()
     float r_avoid;
     float r_follow;
 	float r_match;
-	float v_range;
+	float fov;
 
     std::cin >> w_avoid;
     std::cin >> w_follow;
@@ -46,17 +80,19 @@ void Model::read_input()
     std::cin >> r_follow;
 	std::cin >> r_match;
 
-	std::cin >> v_range;
+	std::cin >> fov;
 
-	Behaviour b = Behaviour();
+	Behaviour b = Behaviour(
+		r_avoid, 
+		r_follow, 
+		r_match,
 
-	b.weight_f = w_follow;
-	b.weight_v = w_match;
-	b.weight_a = w_avoid;
+		w_avoid,
+		w_follow,
+		w_match,
 
-	b.rad_a = r_avoid;
-	b.rad_v = r_match;
-	b.rad_f = r_follow;
+		fov
+		);
 
 	file.close();
 }
