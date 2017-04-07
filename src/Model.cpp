@@ -6,13 +6,15 @@
 void Model1::init()
 {
 	Model::Model();
-	
-	Boid *a = new Boid(
-		Vec3f(0,0,0),
-		Vec3f(0,0,1)
-	);
 
-	boids.push_back(a);
+	for (int i = 0; i < 3; i++)
+	{
+		Boid *a = new Boid(
+			Vec3f(RAND_1(), RAND_1(), RAND_1()),
+			Vec3f(RAND_1(), RAND_1(), RAND_1())
+		);
+		boids.push_back(a);
+	}
 
 	for (int i = 0; i < boids.size(); i++)
 	{

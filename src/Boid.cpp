@@ -3,12 +3,27 @@
 
 Boid::Boid()
 {
+	transform = Mat4f({
+		1,0,0,0,
+		0,1,0,0,
+		0,0,1,0,
+		0,0,0,1
+	});
+	pos = Vec3f(0, 0, 0);
+	vel = Vec3f(0, 0, 0);
 }
 
 Boid::Boid(Vec3f p, Vec3f v)
 {
+	Boid::Boid();
+	transform = Mat4f({
+		1,0,0,0,
+		0,1,0,0,
+		0,0,1,0,
+		0,0,0,1
+	});
 	pos = p;
-	vel = v;
+	vel = v;	
 }
 
 float Boid::linear_weight(Boid *b, float r_inner, float r_outer)
@@ -106,15 +121,23 @@ Vec3f Boid::calc_heading(std::vector<Boid*> *boids, Behaviour *bhvr)
 void Boid::update(std::vector<Boid*> *boids, Behaviour *bhvr, float dt)
 {
 	Vec3f heading = calc_heading(boids, bhvr);
-	Vec3f accel = heading - vel;
+	Vec3f unit_vel = vel.normalized();
+	Vec3f accel = heading - unit_vel.dotProduct(heading) * unit_vel;
 
-	Vec3f f = vel;
-	Vec3f up = f.crossProduct(accel);
-	Vec3f norm = accel;
+	Vec3f t = vel.normalized();
+	Vec3f n = accel.normalized();
+	Vec3f b = t.crossProduct(n).normalized();
 
 	vel += accel * dt;
-	vel += gravity * dt;
 	pos += vel * dt;
+	Vec3f p = pos;
+
+	transform = Mat4f({        // create the frenet frame matrix
+		b.x(), n.x(), t.x(), p.x(),
+		b.y(), n.y(), t.y(), p.y(),
+		b.z(), n.z(), t.z(), p.z(),
+		0, 0, 0, 1
+	});
 }
 
 void Boid::render()
@@ -143,10 +166,14 @@ void Boid::updateGPU()
 {
 	Vec3f verts[3] = {
 		Vec3f(-1 / sqrt(2),0,-1 / sqrt(2)),
-		Vec3f(0, 1, 0),
+		Vec3f(0, 0, 1),
 		Vec3f(1 / sqrt(2),0,-1 / sqrt(2))
 	};
 
+	for (int i = 0; i < 3; i++)
+	{
+		verts[i] = transform * verts[i];
+	}
 	//upload to gpu
 	glBindBuffer(GL_ARRAY_BUFFER, vertBufferID);
 

@@ -4,6 +4,7 @@
 #include <vector>
 #include "glad/glad.h"
 #include "Behaviour.h"
+#include "Mat4f.h"
 
 class Boid
 {
@@ -13,6 +14,7 @@ public:
     Vec3f vel;
 
     Vec3f color;
+	Mat4f transform;
 
 	Boid();
 	Boid(Vec3f p, Vec3f v);
