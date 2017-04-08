@@ -31,6 +31,12 @@ public:
 	void init() override;
 };
 
+class Model2 : public Model
+{
+public:
+	void init() override;
+};
+
 struct Face
 {
     int v_indices[3];

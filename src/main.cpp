@@ -335,9 +335,12 @@ void initModel()
 
     switch (g_model)
     {
-    default:		
-        m = new Model1();
-        break;
+	default:
+		m = new Model1();
+		break;
+	case 1:
+		m = new Model2();
+		break;
     }
     m->init();
 }
@@ -390,7 +393,6 @@ int main(int argc, char **argv) {
   double curr_time = glfwGetTime();
   double last_time = glfwGetTime() - targ_elapsed;
 
-  int frame = 0;
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
 	  !glfwWindowShouldClose(window)) {
 	  curr_time = glfwGetTime();
@@ -398,8 +400,6 @@ int main(int argc, char **argv) {
 	  {
 		  if (g_play) {
                 m->update(targ_elapsed *  g_play_speed);
-                frame++;
-                printf("%d\n", frame);
 		  }
 
 		  last_time = curr_time;
@@ -480,8 +480,8 @@ void windowKeyFunc(GLFWwindow *window, int key, int scancode, int action,
 	  if (set)
 	  {
 		  g_model++;
-          if (g_model > 4)
-              g_model = 4;
+          if (g_model > 2)
+              g_model = 2;
 		  initModel();
 	  }
       break;

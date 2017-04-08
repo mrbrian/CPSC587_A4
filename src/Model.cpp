@@ -5,10 +5,10 @@
 
 void Model1::init()
 {
-    Model();
+	Model();
 
-    bhvr = read_input();
-    for (int i = 0; i < bhvr.num_boids; i++)
+	bhvr = read_input();
+	for (int i = 0; i < bhvr.num_boids; i++)
 	{
 		Boid *a = new Boid(
 			Vec3f(RAND_1(), RAND_1(), RAND_1()),
@@ -23,6 +23,50 @@ void Model1::init()
 		b.load();
 	}
 
+	for (int i = 0; i < 2; i++)
+	{
+		Obstacle *a = new Sphere(
+			//Vec3f(RAND_1(), RAND_1(), RAND_1()),
+			Vec3f(0,0,0),
+			0.5f);
+		objects.push_back(a);
+	}
+
+	for (int i = 0; i < objects.size(); i++)
+	{
+		Obstacle &b = *objects[i];
+		b.load();
+	}
+
+}
+
+void Model2::init()
+{
+	Model();
+
+	Sphere *obj = new Sphere(Vec3f(0, 0, 0), 0.25f);
+	objects.push_back(obj);
+
+	bhvr = read_input();
+	Boid *a = new Boid(
+		Vec3f(0, 0.00001f, 0),
+		Vec3f(-5, 0, 0)
+	);
+	boids.push_back(a);
+
+	Boid *b = new Boid(
+		Vec3f(1, 0.0002f, 0),
+		Vec3f(5, 0, 0)
+	);
+	boids.push_back(b);
+
+	obj->load();
+
+	for (int i = 0; i < boids.size(); i++)
+	{
+		Boid &b = *boids[i];
+		b.load();
+	}
 }
 
 Model::Model()
@@ -38,6 +82,12 @@ void Model::render()
 
 		b.render();
 	}
+	for (int i = 0; i < objects.size(); i++)
+	{
+		Obstacle &o = *objects[i];
+
+		o.render();
+	}
 }
 
 void Model::init()
@@ -50,7 +100,7 @@ void Model::update(float dt)
     {
         Boid &b = *boids[i];
 
-        b.update(&boids, &bhvr, dt);
+        b.update(&boids, &objects, &bhvr, dt);
     }
 }
 

@@ -1,5 +1,6 @@
 #include "Boid.h"
 #include <algorithm>
+#include "Obstacle.h"
 
 Boid::Boid()
 {
@@ -26,9 +27,9 @@ Boid::Boid(Vec3f p, Vec3f v)
 	vel = v;	
 }
 
-float Boid::linear_weight(Boid *b, float r_inner, float r_outer)
+float Boid::linear_weight(Vec3f b_pos, float r_inner, float r_outer)
 {
-    float r = (b->pos - pos).length();
+    float r = (b_pos - pos).length();
 
     float result = (r - r_inner) / (r_outer - r_inner);
     return result;
@@ -37,16 +38,17 @@ float Boid::linear_weight(Boid *b, float r_inner, float r_outer)
 Vec3f Boid::following(Boid *b, Behaviour *bhvr)
 {
 	Vec3f dir = b->pos - pos;
-	float w = linear_weight(b, bhvr->rad_a, bhvr->rad_f);
+	float w = linear_weight(b->pos, bhvr->rad_a, bhvr->rad_f);
     color[1] = w;
 
 	return dir * w;
 }
 
-Vec3f Boid::avoid(Boid *b, Behaviour *bhvr)
+Vec3f Boid::avoid(Vec3f b_pos, Behaviour *bhvr)
 {
-	Vec3f result = pos - b->pos;
-	float w = pow(1 - linear_weight(b, 0, bhvr->rad_a), 2);
+	Vec3f result = pos - b_pos;
+	float lin_w = linear_weight(b_pos, 0, bhvr->rad_a);
+	float w = 1 / pow(lin_w, 2);
 	result.normalize();
 
     color[0] = w;
@@ -56,15 +58,15 @@ Vec3f Boid::avoid(Boid *b, Behaviour *bhvr)
 Vec3f Boid::velocity(Boid *b, Behaviour *bhvr)
 {
 	Vec3f dir = b->vel - pos;
-    float w = linear_weight(b, bhvr->rad_f, bhvr->rad_v);
+    float w = linear_weight(b->pos, bhvr->rad_f, bhvr->rad_v);
 
     color[2] = w;
     return b->vel * w;
 }
 
-bool within_radius(Boid *a, Boid *b, float r)
+bool within_radius(Boid *a, Vec3f b_p, float r)
 {
-	float r_sq = (b->pos - a->pos).lengthSquared();
+	float r_sq = (b_p - a->pos).lengthSquared();
 	return (r_sq <= r * r);
 }
 
@@ -76,7 +78,7 @@ bool visible_range(Boid *a, Boid *b, float rad)
 	return (phi < rad);
 }
 
-Vec3f Boid::calc_heading(std::vector<Boid*> *boids, Behaviour *bhvr)
+Vec3f Boid::calc_heading(std::vector<Boid*> *boids, std::vector<Obstacle*> *objs, Behaviour *bhvr)
 {
 	float a_a = bhvr->weight_a;
 	float a_f = bhvr->weight_f;
@@ -97,20 +99,30 @@ Vec3f Boid::calc_heading(std::vector<Boid*> *boids, Behaviour *bhvr)
 		if (&b == this)
 			continue;
 
-		if (within_radius(this, &b, bhvr->rad_a))
+		if (within_radius(this, b.pos, bhvr->rad_a))
 		{
-			h_a += avoid(&b, bhvr);
-			continue;	
+			h_a += avoid(b.pos, bhvr);
+			continue;
 		}
-		if (within_radius(this, &b, bhvr->rad_f)
+		if (within_radius(this, b.pos, bhvr->rad_f)
 			&& visible_range(this, &b, bhvr->fov))
 		{
 			h_f += following(&b, bhvr);
 			num_follow++;
 		}
-		if (within_radius(this, &b, bhvr->rad_v))
-			h_v += velocity(&b, bhvr);
-					
+		if (within_radius(this, b.pos, bhvr->rad_v))
+			h_v += velocity(&b, bhvr);					
+	}
+
+	for (int j = 0; j < objs->size(); j++)
+	{
+		Obstacle &b = *(*objs)[j];
+		Vec3f pt = b.nearest_point(pos);
+		if (within_radius(this, pt, bhvr->rad_a))
+		{
+			h_a += avoid(pt, bhvr);
+			continue;
+		}
 	}
 	if (num_follow > 0)
 		h_f *= 1.0f / num_follow;
@@ -123,17 +135,21 @@ Vec3f Boid::calc_heading(std::vector<Boid*> *boids, Behaviour *bhvr)
 	return h;
 }
 
-void Boid::update(std::vector<Boid*> *boids, Behaviour *bhvr, float dt)
+void Boid::update(std::vector<Boid*> *boids, std::vector<Obstacle*> *objs, Behaviour *bhvr, float dt)
 {
-	Vec3f heading = calc_heading(boids, bhvr);
+	Vec3f heading = calc_heading(boids, objs, bhvr);
 	Vec3f unit_vel = vel.normalized();
-	Vec3f accel = heading - unit_vel.dotProduct(heading) * unit_vel;
-
+	Vec3f perp_accel = heading - unit_vel.dotProduct(heading) * unit_vel;
+	Vec3f par_accel = unit_vel.dotProduct(heading) * unit_vel;
+	
 	Vec3f t = vel.normalized();
-	Vec3f n = accel.normalized();
+	Vec3f n = perp_accel.normalized();
 	Vec3f b = t.crossProduct(n).normalized();
 
-	vel += accel * dt;
+	vel += (perp_accel + par_accel) * dt;
+	if (vel.lengthSquared() > MAX_SPEED * MAX_SPEED)
+		vel = vel.normalized() * MAX_SPEED;
+
 	pos += vel * dt;
 	Vec3f p = pos;
 
@@ -153,7 +169,7 @@ void Boid::render()
 	updateGPU();
 
 	// Draw Quads, start at vertex 0, draw 4 of them (for a quad)
-    color.normalize();
+   // color.normalize();
     reloadColorUniform(color.x(), color.y(), color.z());
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 	glBindVertexArray(0);

@@ -5,6 +5,7 @@
 #include "glad/glad.h"
 #include "Behaviour.h"
 #include "Mat4f.h"
+#include "Obstacle.h"
 
 class Boid
 {
@@ -18,12 +19,12 @@ public:
 	Boid();
 	Boid(Vec3f p, Vec3f v);
 
-	float linear_weight(Boid * b, float r_inner, float r_outer);
-	Vec3f calc_heading(std::vector<Boid*> *boids, Behaviour *bhvr);
-	void update(std::vector<Boid*> *boids, Behaviour *bhvr, float dt);
+	float linear_weight(Vec3f b_pos, float r_inner, float r_outer);
+	Vec3f calc_heading(std::vector<Boid*> *boids, std::vector<Obstacle*> *objs, Behaviour *bhvr);
+	void update(std::vector<Boid*> *boids, std::vector<Obstacle*> *objs, Behaviour *bhvr, float dt);
 
 	Vec3f following(Boid *b, Behaviour *bhvr);
-	Vec3f avoid(Boid *b, Behaviour *bhvr);
+	Vec3f avoid(Vec3f b_pos, Behaviour *bhvr);
 	Vec3f velocity(Boid *b, Behaviour *bhvr);
 	
 	void render();
@@ -31,6 +32,7 @@ public:
     void updateGPU();
     
 	const Vec3f gravity = Vec3f(0, -9.81, 0);
+	const float MAX_SPEED = 10;  
 
 	GLuint vertBufferID;
     GLuint vaoID;
