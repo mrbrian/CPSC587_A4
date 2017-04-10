@@ -38,17 +38,17 @@ float Boid::linear_weight(Vec3f b_pos, float r_inner, float r_outer)
 Vec3f Boid::following(Boid *b, Behaviour *bhvr)
 {
 	Vec3f dir = b->pos - pos;
-	float w = linear_weight(b->pos, bhvr->rad_a, bhvr->rad_f);
+	float w = 1 - linear_weight(b->pos, bhvr->rad_v, bhvr->rad_f);
     color[1] = w;
 
-	return dir * w;
+	return dir * w *w;
 }
 
 Vec3f Boid::avoid(Vec3f b_pos, Behaviour *bhvr)
 {
 	Vec3f result = pos - b_pos;
 	float lin_w = linear_weight(b_pos, 0, bhvr->rad_a);
-	float w = 1 / pow(lin_w, 2);
+	float w = 1 / pow(lin_w, 2) - 1;
 	result.normalize();
 
     color[0] = w;
@@ -57,11 +57,10 @@ Vec3f Boid::avoid(Vec3f b_pos, Behaviour *bhvr)
 
 Vec3f Boid::velocity(Boid *b, Behaviour *bhvr)
 {
-	Vec3f dir = b->vel - pos;
-    float w = linear_weight(b->pos, bhvr->rad_f, bhvr->rad_v);
+    float w = 1 - linear_weight(b->pos, bhvr->rad_a, bhvr->rad_v);
 
     color[2] = w;
-    return b->vel * w;
+    return b->vel * w * w;
 }
 
 bool within_radius(Boid *a, Vec3f b_p, float r)
@@ -78,7 +77,7 @@ bool visible_range(Boid *a, Boid *b, float rad)
 	return (phi < rad);
 }
 
-Vec3f Boid::calc_heading(std::vector<Boid*> *boids, std::vector<Obstacle*> *objs, Behaviour *bhvr)
+void Boid::calc_heading(std::vector<Boid*> *boids, std::vector<Obstacle*> *objs, Behaviour *bhvr)
 {
 	float a_a = bhvr->weight_a;
 	float a_f = bhvr->weight_f;
@@ -98,14 +97,15 @@ Vec3f Boid::calc_heading(std::vector<Boid*> *boids, std::vector<Obstacle*> *objs
 
 		if (&b == this)
 			continue;
+		if (!visible_range(this, &b, bhvr->fov))
+			continue;
 
 		if (within_radius(this, b.pos, bhvr->rad_a))
 		{
 			h_a += avoid(b.pos, bhvr);
 			continue;
 		}
-		if (within_radius(this, b.pos, bhvr->rad_f)
-			&& visible_range(this, &b, bhvr->fov))
+		if (within_radius(this, b.pos, bhvr->rad_f))
 		{
 			h_f += following(&b, bhvr);
 			num_follow++;
@@ -132,12 +132,11 @@ Vec3f Boid::calc_heading(std::vector<Boid*> *boids, std::vector<Obstacle*> *objs
 	h_f = h_f - pos;
 
     Vec3f h = a_a * h_a + a_f * h_f + a_v * (h_v - v);
-	return h;
+	heading = h;
 }
 
-void Boid::update(std::vector<Boid*> *boids, std::vector<Obstacle*> *objs, Behaviour *bhvr, float dt)
+void Boid::update(float dt)
 {
-	Vec3f heading = calc_heading(boids, objs, bhvr);
 	Vec3f unit_vel = vel.normalized();
 	Vec3f perp_accel = heading - unit_vel.dotProduct(heading) * unit_vel;
 	Vec3f par_accel = unit_vel.dotProduct(heading) * unit_vel;

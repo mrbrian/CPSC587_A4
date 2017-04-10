@@ -15,6 +15,8 @@ public:
     float weight_v;
 
 	float fov; // radian
+	float world; 
+	float distr;
 
 	Behaviour() {}
 
@@ -27,7 +29,9 @@ public:
 		float wa,
 		float wf,
 		float wv,
-		float fv)
+		float fv,
+		float wb,
+		float ds)
     {
 
         num_boids = num_b;
@@ -41,6 +45,8 @@ public:
 		weight_v = wv;
 
 		fov = fv;
+		world = wb;
+		distr = ds;
 	}
 };
 

@@ -2,9 +2,10 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Sphere::Sphere(Vec3f p, float r)
+Sphere::Sphere(Vec3f p, Vec3f c, float r)
 {
 	position = p;
+	color = c;
 	radius = r;
 }
 
@@ -24,8 +25,8 @@ void Sphere::render()
 	glPointSize(2);
 	// Draw Quads, start at vertex 0, draw 4 of them (for a quad)
 	// color.normalize();
-	//reloadColorUniform(color.x(), color.y(), color.z());
-	glDrawArrays(GL_POINTS, 0, verts.size());
+	reloadColorUniform(color.x(), color.y(), color.z());
+	glDrawArrays(GL_LINES_ADJACENCY, 0, verts.size());
 	glBindVertexArray(0);
 }
 

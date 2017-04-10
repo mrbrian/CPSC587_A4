@@ -1,7 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include "Model.h"
-
+#include <string>
+#include <sstream>
 
 void Model1::init()
 {
@@ -11,7 +12,7 @@ void Model1::init()
 	for (int i = 0; i < bhvr.num_boids; i++)
 	{
 		Boid *a = new Boid(
-			Vec3f(RAND_1(), RAND_1(), RAND_1()),
+			Vec3f(RAND_1(), RAND_1(), RAND_1()).normalized() * bhvr.distr,
 			Vec3f(RAND_1(), RAND_1(), RAND_1())
 		);
 		boids.push_back(a);
@@ -23,12 +24,19 @@ void Model1::init()
 		b.load();
 	}
 
-	for (int i = 0; i < 2; i++)
+	// boundary sphere
+	objects.push_back(new Sphere(
+		Vec3f(0, 0, 0),
+		Vec3f(0.3f, 0.3f, 0.3f),
+		bhvr.world));
+
+	for (int i = 0; i < bhvr.num_objs; i++)
 	{
+		float dist = (float)i / bhvr.num_objs * bhvr.world;
 		Obstacle *a = new Sphere(
-			//Vec3f(RAND_1(), RAND_1(), RAND_1()),
-			Vec3f(0,0,0),
-			0.5f);
+			Vec3f(RAND_1(), RAND_1(), RAND_1()).normalized() * dist,
+			Vec3f(1, 0, 0),
+			2);
 		objects.push_back(a);
 	}
 
@@ -44,7 +52,7 @@ void Model2::init()
 {
 	Model();
 
-	Sphere *obj = new Sphere(Vec3f(0, 0, 0), 0.25f);
+	Sphere *obj = new Sphere(Vec3f(0, 0, 0), Vec3f(0.3f, 0.3f, 0.3f), 0.25f);
 	objects.push_back(obj);
 
 	bhvr = read_input();
@@ -96,12 +104,33 @@ void Model::init()
 
 void Model::update(float dt)
 {
-    for (int i = 0; i < boids.size(); i++)
+
+	for (int i = 0; i < boids.size(); i++)
+	{
+		Boid &b = *boids[i];
+
+		b.calc_heading(&boids, &objects, &bhvr);
+	}
+
+	for (int i = 0; i < boids.size(); i++)
     {
         Boid &b = *boids[i];
 
-        b.update(&boids, &objects, &bhvr, dt);
+        b.update(dt);
     }
+}
+
+float file_read_value(std::fstream *file)
+{
+	float result;
+	std::string str;
+
+	std::getline(*file, str);
+
+	std::stringstream ss(str);
+	
+	ss >> result;
+	return result;
 }
 
 Behaviour Model::read_input()
@@ -113,8 +142,8 @@ Behaviour Model::read_input()
     file.open("input.txt");
     if (!file.is_open())
         return Behaviour();
-    file >> num_boids;
-    file >> num_objs;
+	num_boids = file_read_value(&file);
+    num_objs = file_read_value(&file);
 
 	float w_avoid;
 	float w_follow;
@@ -125,15 +154,17 @@ Behaviour Model::read_input()
 	float r_match;
 	float fov;
 
-    file >> w_avoid;
-    file >> w_follow;
-    file >> w_match;
+    w_avoid = file_read_value(&file);
+    w_follow = file_read_value(&file);
+    w_match = file_read_value(&file);
 
-    file >> r_avoid;
-    file >> r_follow;
-    file >> r_match;
+    r_avoid = file_read_value(&file);
+    r_follow = file_read_value(&file);
+    r_match = file_read_value(&file);
 
-    file >> fov;
+	fov = file_read_value(&file);
+	float world = file_read_value(&file);
+	float distr = file_read_value(&file);
 
     file.close();
 
@@ -148,6 +179,8 @@ Behaviour Model::read_input()
 		w_follow,
 		w_match,
 
-		fov
+		fov,
+		world,
+		distr
     );
 }

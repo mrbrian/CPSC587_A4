@@ -1,9 +1,11 @@
-100
-0
-3
-2
-1
-3
-6
-9
-150
+100	# number of boids
+5	# number of obstacles
+16	# avoidance weight
+2	# follow weight
+4	# match velocity weight
+2	# avoidance radius
+8	# follow radius
+4	# match velocity weight
+120	# boid field of view
+40	# radius of world bounds
+4	# radius of initial boid distribution

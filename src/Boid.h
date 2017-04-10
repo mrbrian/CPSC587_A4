@@ -12,6 +12,7 @@ class Boid
 public:
 	Vec3f pos;
     Vec3f vel;
+	Vec3f heading;
 
     Vec3f color;
 	Mat4f transform;
@@ -20,8 +21,8 @@ public:
 	Boid(Vec3f p, Vec3f v);
 
 	float linear_weight(Vec3f b_pos, float r_inner, float r_outer);
-	Vec3f calc_heading(std::vector<Boid*> *boids, std::vector<Obstacle*> *objs, Behaviour *bhvr);
-	void update(std::vector<Boid*> *boids, std::vector<Obstacle*> *objs, Behaviour *bhvr, float dt);
+	void calc_heading(std::vector<Boid*> *boids, std::vector<Obstacle*> *objs, Behaviour *bhvr);
+	void update(float dt);
 
 	Vec3f following(Boid *b, Behaviour *bhvr);
 	Vec3f avoid(Vec3f b_pos, Behaviour *bhvr);

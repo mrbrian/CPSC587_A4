@@ -3,6 +3,12 @@
 #include "Boid.h"
 #include "Obstacle.h"
 
+class Goal
+{
+	Vec3f pos;
+	float scale;
+};
+
 class Model
 {
 public:
@@ -12,6 +18,8 @@ public:
 	std::vector<Boid*> boids;
 	std::vector<Obstacle*> objects;
 	Behaviour bhvr;
+	Goal follow;
+
 
 	double RAND_1()
 	{

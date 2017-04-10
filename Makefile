@@ -20,7 +20,7 @@ SOURCES = $(filter-out $(SRCDIR)/tests.cpp, $(wildcard $(SRCDIR)/*.cpp))
 
 OBJECTS=$(addprefix $(OBJDIR)/,$(notdir $(SOURCES:.cpp=.o)))
 
-EXECUTABLE=assign3
+EXECUTABLE=assign4
 
 all: $(SOURCES) $(EXECUTABLE)
 
