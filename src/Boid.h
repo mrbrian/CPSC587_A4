@@ -26,14 +26,14 @@ public:
 
 	Vec3f following(Boid *b, Behaviour *bhvr);
 	Vec3f avoid(Vec3f b_pos, Behaviour *bhvr);
-	Vec3f velocity(Boid *b, Behaviour *bhvr);
+    Vec3f match_velocity(Boid *b, Behaviour *bhvr);
 	
 	void render();
     void load();
     void updateGPU();
-    
-	const Vec3f gravity = Vec3f(0, -9.81, 0);
-	const float MAX_SPEED = 10;  
+
+    const float MIN_SPEED = 7.5f;
+    const float MAX_SPEED = 10;
 
 	GLuint vertBufferID;
     GLuint vaoID;

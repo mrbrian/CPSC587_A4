@@ -18,7 +18,7 @@ To run the program, on the terminal enter the following command:
 
 	The initial simulation state can be modified via input.txt.
 	
-	1  - Previous model scene
+	1  - Restart scene
 	
 	+  - Increase time step 
 	-  - Decrease time step
@@ -28,3 +28,11 @@ To run the program, on the terminal enter the following command:
 	
 	
 === 3. ALGORITHMS and DESIGN DECISIONS: ===
+
+Boids are spawned in a sphere of user-specified radius
+Avoidance rule uses inverse weighting.  
+Gravity is not implemented.
+Obstacle(sphere) avoidance is implemented.
+No acceleration structures implemented.
+
+Boids change color depending on the dominant rule (Red = Avoid, Green = Follow, Blue = Match Velocity)

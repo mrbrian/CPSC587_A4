@@ -41,7 +41,7 @@ Vec3f Boid::following(Boid *b, Behaviour *bhvr)
 	float w = 1 - linear_weight(b->pos, bhvr->rad_v, bhvr->rad_f);
     color[1] = w;
 
-	return dir * w *w;
+    return dir * w;
 }
 
 Vec3f Boid::avoid(Vec3f b_pos, Behaviour *bhvr)
@@ -55,12 +55,12 @@ Vec3f Boid::avoid(Vec3f b_pos, Behaviour *bhvr)
 	return result * w;
 }
 
-Vec3f Boid::velocity(Boid *b, Behaviour *bhvr)
+Vec3f Boid::match_velocity(Boid *b, Behaviour *bhvr)
 {
     float w = 1 - linear_weight(b->pos, bhvr->rad_a, bhvr->rad_v);
 
     color[2] = w;
-    return b->vel * w * w;
+    return b->vel * w;
 }
 
 bool within_radius(Boid *a, Vec3f b_p, float r)
@@ -72,7 +72,7 @@ bool within_radius(Boid *a, Vec3f b_p, float r)
 bool visible_range(Boid *a, Boid *b, float rad)
 {
 	Vec3f dir = (b->pos - a->pos).normalized();
-	Vec3f unit_v = a->vel.normalized();
+    Vec3f unit_v = a->vel.normalized();
 	double phi = acos(unit_v.dotProduct(dir));
 	return (phi < rad);
 }
@@ -111,7 +111,7 @@ void Boid::calc_heading(std::vector<Boid*> *boids, std::vector<Obstacle*> *objs,
 			num_follow++;
 		}
 		if (within_radius(this, b.pos, bhvr->rad_v))
-			h_v += velocity(&b, bhvr);					
+            h_v += match_velocity(&b, bhvr);
 	}
 
 	for (int j = 0; j < objs->size(); j++)
@@ -132,7 +132,7 @@ void Boid::calc_heading(std::vector<Boid*> *boids, std::vector<Obstacle*> *objs,
 	h_f = h_f - pos;
 
     Vec3f h = a_a * h_a + a_f * h_f + a_v * (h_v - v);
-	heading = h;
+	heading = h;    
 }
 
 void Boid::update(float dt)
@@ -145,8 +145,10 @@ void Boid::update(float dt)
 	Vec3f n = perp_accel.normalized();
 	Vec3f b = t.crossProduct(n).normalized();
 
-	vel += (perp_accel + par_accel) * dt;
-	if (vel.lengthSquared() > MAX_SPEED * MAX_SPEED)
+    vel += (perp_accel + par_accel) * dt;
+    if (vel.lengthSquared() < MIN_SPEED * MIN_SPEED)
+        vel = vel.normalized() * MIN_SPEED;
+    if (vel.lengthSquared() > MAX_SPEED * MAX_SPEED)
 		vel = vel.normalized() * MAX_SPEED;
 
 	pos += vel * dt;

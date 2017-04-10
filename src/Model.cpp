@@ -13,7 +13,7 @@ void Model1::init()
 	{
 		Boid *a = new Boid(
 			Vec3f(RAND_1(), RAND_1(), RAND_1()).normalized() * bhvr.distr,
-			Vec3f(RAND_1(), RAND_1(), RAND_1())
+            Vec3f(RAND_1(), RAND_1(), RAND_1()).normalized() * 10
 		);
 		boids.push_back(a);
 	}
@@ -22,6 +22,9 @@ void Model1::init()
 	{
 		Boid &b = *boids[i];
 		b.load();
+        b.calc_heading(&boids, &objects, &bhvr);
+        b.update(0.01f);
+        b.updateGPU();
 	}
 
 	// boundary sphere
@@ -42,8 +45,8 @@ void Model1::init()
 
 	for (int i = 0; i < objects.size(); i++)
 	{
-		Obstacle &b = *objects[i];
-		b.load();
+        Obstacle &o = *objects[i];
+        o.load();
 	}
 
 }
@@ -162,7 +165,7 @@ Behaviour Model::read_input()
     r_follow = file_read_value(&file);
     r_match = file_read_value(&file);
 
-	fov = file_read_value(&file);
+    fov = file_read_value(&file) * M_PI / 180;
 	float world = file_read_value(&file);
 	float distr = file_read_value(&file);
 

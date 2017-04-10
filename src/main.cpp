@@ -337,10 +337,7 @@ void initModel()
     {
 	default:
 		m = new Model1();
-		break;
-	case 1:
-		m = new Model2();
-		break;
+        break;
     }
     m->init();
 }
