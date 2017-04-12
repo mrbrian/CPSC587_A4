@@ -39,7 +39,6 @@ Vec3f Boid::following(Boid *b, Behaviour *bhvr)
 {
 	Vec3f dir = b->pos - pos;
 	float w = 1 - linear_weight(b->pos, bhvr->rad_in, bhvr->rad_out);
-	color[1] = w;
 
     return dir * w ;
 }
@@ -51,7 +50,6 @@ Vec3f Boid::avoid(Vec3f b_pos, Behaviour *bhvr)
 	float w = 1 / pow(lin_w, 2) - 1;
 	result.normalize();
 
-    color[0] = w;
 	return result * w;
 }
 
@@ -59,7 +57,6 @@ Vec3f Boid::match_velocity(Boid *b, Behaviour *bhvr)
 {
     float w = 1 - linear_weight(b->pos, bhvr->rad_in, bhvr->rad_out);
 
-    color[2] = w;
     return b->vel * w;
 }
 
@@ -131,6 +128,9 @@ void Boid::calc_heading(std::vector<Boid*> *boids, std::vector<Obstacle*> *objs,
 
 	h_f = h_f - pos;
 
+	color[0] = h_a.length();
+	color[1] = h_f.length();
+	color[2] = h_v.length();
     Vec3f h = a_a * h_a + a_f * h_f + a_v * (h_v - v);
 	heading = h;    
 }
@@ -153,7 +153,7 @@ void Boid::update(float dt)
 	if (v_length < MIN_SPEED)
 	{
 		vel.normalize();
-		vel *= v_length + 0.25f;
+		vel *= MIN_SPEED;// +0.25f;
 	}
 	if (v_length > MAX_SPEED)
 	{

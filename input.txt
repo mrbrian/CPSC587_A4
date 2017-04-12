@@ -1,4 +1,4 @@
-100	# number of boids
+200	# number of boids
 5	# number of obstacles
 3	# avoidance weight
 2	# match velocity weight

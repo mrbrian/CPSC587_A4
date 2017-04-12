@@ -19,6 +19,7 @@ To run the program, on the terminal enter the following command:
 	The initial simulation state can be modified via input.txt.
 	
 	1  - Restart scene
+	Space - Play/pause scene
 	
 	+  - Increase time step 
 	-  - Decrease time step
@@ -29,10 +30,11 @@ To run the program, on the terminal enter the following command:
 	
 === 3. ALGORITHMS and DESIGN DECISIONS: ===
 
-Boids are spawned in a sphere of user-specified radius
-Avoidance rule uses inverse weighting.  
-Gravity is not implemented.
-Obstacle(sphere) avoidance is implemented.
-No acceleration structures implemented.
-
-Boids change color depending on the dominant rule (Red = Avoid, Green = Follow, Blue = Match Velocity)
+	Boids are spawned in a sphere of user-specified radius with random headings.  
+	Avoidance rule uses inverse weighting, the other rules are linear.  
+	Gravity is not implemented.
+	Obstacle(sphere) avoidance is implemented the same way as avoiding other boids.
+	No acceleration structures implemented.
+	There is a min/max velocity enforced such that a boid traveling outside of this bound will have their speed
+	increased/decreased by a constant rate.  (Boid.cpp:155)
+	Color of the boids change reflects the dominant rule guiding an individual(Red = Avoid, Green = Follow, Blue = Match Velocity).

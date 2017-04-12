@@ -338,9 +338,6 @@ void initModel()
 	default:
 		m = new Model1();
 		break;
-	case 1:
-		m = new Model2();
-		break;
     }
     m->init();
 }
@@ -469,22 +466,8 @@ void windowKeyFunc(GLFWwindow *window, int key, int scancode, int action,
     break;
   case GLFW_KEY_1:
 	  if (set)
-	  {
-		  g_model--;
-		  if (g_model < 0)
-			  g_model = 0;
 		  initModel();
-	  }
-	break;
-  case GLFW_KEY_2:
-	  if (set)
-	  {
-		  g_model++;
-          if (g_model > 2)
-              g_model = 2;
-		  initModel();
-	  }
-      break;
+		break;
   case GLFW_KEY_EQUAL:
       g_play_speed++;
       break;

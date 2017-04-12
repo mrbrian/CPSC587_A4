@@ -13,7 +13,7 @@ void Model1::init()
 	{
 		Boid *a = new Boid(
 			Vec3f(RAND_1(), RAND_1(), RAND_1()).normalized() * bhvr.distr,
-            Vec3f(0,1,0).normalized() * 10
+			Vec3f(RAND_1(), RAND_1(), RAND_1()).normalized() * 10
 		);
 		boids.push_back(a);
 	}
