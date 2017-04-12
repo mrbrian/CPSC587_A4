@@ -38,16 +38,16 @@ float Boid::linear_weight(Vec3f b_pos, float r_inner, float r_outer)
 Vec3f Boid::following(Boid *b, Behaviour *bhvr)
 {
 	Vec3f dir = b->pos - pos;
-	float w = 1 - linear_weight(b->pos, bhvr->rad_v, bhvr->rad_f);
-    color[1] = w;
+	float w = 1 - linear_weight(b->pos, bhvr->rad_in, bhvr->rad_out);
+	color[1] = w;
 
-    return dir * w;
+    return dir * w ;
 }
 
 Vec3f Boid::avoid(Vec3f b_pos, Behaviour *bhvr)
 {
 	Vec3f result = pos - b_pos;
-	float lin_w = linear_weight(b_pos, 0, bhvr->rad_a);
+	float lin_w = linear_weight(b_pos, 0, bhvr->rad_in);
 	float w = 1 / pow(lin_w, 2) - 1;
 	result.normalize();
 
@@ -57,7 +57,7 @@ Vec3f Boid::avoid(Vec3f b_pos, Behaviour *bhvr)
 
 Vec3f Boid::match_velocity(Boid *b, Behaviour *bhvr)
 {
-    float w = 1 - linear_weight(b->pos, bhvr->rad_a, bhvr->rad_v);
+    float w = 1 - linear_weight(b->pos, bhvr->rad_in, bhvr->rad_out);
 
     color[2] = w;
     return b->vel * w;
@@ -100,25 +100,25 @@ void Boid::calc_heading(std::vector<Boid*> *boids, std::vector<Obstacle*> *objs,
 		if (!visible_range(this, &b, bhvr->fov))
 			continue;
 
-		if (within_radius(this, b.pos, bhvr->rad_a))
+		if (within_radius(this, b.pos, bhvr->rad_in))
 		{
 			h_a += avoid(b.pos, bhvr);
 			continue;
 		}
-		if (within_radius(this, b.pos, bhvr->rad_f))
+		if (within_radius(this, b.pos, bhvr->rad_out))
 		{
 			h_f += following(&b, bhvr);
 			num_follow++;
-		}
-		if (within_radius(this, b.pos, bhvr->rad_v))
             h_v += match_velocity(&b, bhvr);
+			num_match++;
+		}
 	}
 
 	for (int j = 0; j < objs->size(); j++)
 	{
 		Obstacle &b = *(*objs)[j];
 		Vec3f pt = b.nearest_point(pos);
-		if (within_radius(this, pt, bhvr->rad_a))
+		if (within_radius(this, pt, bhvr->rad_in))
 		{
 			h_a += avoid(pt, bhvr);
 			continue;
@@ -143,13 +143,23 @@ void Boid::update(float dt)
 	
 	Vec3f t = vel.normalized();
 	Vec3f n = perp_accel.normalized();
+ 	if (n.hasNans())
+		n = Vec3f(0, 1, 0);
 	Vec3f b = t.crossProduct(n).normalized();
 
     vel += (perp_accel + par_accel) * dt;
-    if (vel.lengthSquared() < MIN_SPEED * MIN_SPEED)
-        vel = vel.normalized() * MIN_SPEED;
-    if (vel.lengthSquared() > MAX_SPEED * MAX_SPEED)
-		vel = vel.normalized() * MAX_SPEED;
+	float v_length = vel.length();
+	
+	if (v_length < MIN_SPEED)
+	{
+		vel.normalize();
+		vel *= v_length + 0.25f;
+	}
+	if (v_length > MAX_SPEED)
+	{
+		vel.normalize();
+		vel *= v_length - 0.25f;
+	}
 
 	pos += vel * dt;
 	Vec3f p = pos;

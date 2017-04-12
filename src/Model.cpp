@@ -13,7 +13,7 @@ void Model1::init()
 	{
 		Boid *a = new Boid(
 			Vec3f(RAND_1(), RAND_1(), RAND_1()).normalized() * bhvr.distr,
-            Vec3f(RAND_1(), RAND_1(), RAND_1()).normalized() * 10
+            Vec3f(0,1,0).normalized() * 10
 		);
 		boids.push_back(a);
 	}
@@ -60,7 +60,7 @@ void Model2::init()
 
 	bhvr = read_input();
 	Boid *a = new Boid(
-		Vec3f(0, 0.00001f, 0),
+		Vec3f(-1, 0.00001f, 0),
 		Vec3f(-5, 0, 0)
 	);
 	boids.push_back(a);
@@ -153,19 +153,17 @@ Behaviour Model::read_input()
 	float w_match;
 
     float r_avoid;
-    float r_follow;
 	float r_match;
 	float fov;
 
     w_avoid = file_read_value(&file);
-    w_follow = file_read_value(&file);
     w_match = file_read_value(&file);
+	w_follow = file_read_value(&file);
 
     r_avoid = file_read_value(&file);
-    r_follow = file_read_value(&file);
     r_match = file_read_value(&file);
 
-    fov = file_read_value(&file) * M_PI / 180;
+    fov = file_read_value(&file) * 3.14f / 180;
 	float world = file_read_value(&file);
 	float distr = file_read_value(&file);
 
@@ -175,7 +173,6 @@ Behaviour Model::read_input()
         num_boids,
         num_objs,
 		r_avoid, 
-		r_follow, 
 		r_match,
 
 		w_avoid,

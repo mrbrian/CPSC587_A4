@@ -6,9 +6,8 @@ class Behaviour
 public:
     int num_boids;
     int num_objs;
-    float rad_a;
-    float rad_f;
-    float rad_v;
+	float rad_in;
+	float rad_out;
 
     float weight_a;
     float weight_f;
@@ -23,9 +22,8 @@ public:
     Behaviour(
         int num_b,
         int num_o,
-        float ra,
-		float rf,
-		float rv,
+        float r_in,
+		float r_out,
 		float wa,
 		float wf,
 		float wv,
@@ -36,10 +34,9 @@ public:
 
         num_boids = num_b;
         num_objs = num_o;
-        rad_a = ra;
+        rad_in = r_in;
 
-		rad_f = rf;
-		rad_v = rv;
+		rad_out = r_out;
 		weight_a = wa;
 		weight_f = wf;
 		weight_v = wv;

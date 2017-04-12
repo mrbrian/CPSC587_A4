@@ -25,6 +25,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Mat4f.cpp" />
     <ClCompile Include="src\Model.cpp" />
+    <ClCompile Include="src\Obstacle.cpp" />
     <ClCompile Include="src\OpenGLMatrixTools.cpp" />
     <ClCompile Include="src\Quat4f.cpp" />
     <ClCompile Include="src\ShaderTools.cpp" />

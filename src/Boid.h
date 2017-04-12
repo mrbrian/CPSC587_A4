@@ -32,8 +32,8 @@ public:
     void load();
     void updateGPU();
 
-    const float MIN_SPEED = 7.5f;
-    const float MAX_SPEED = 10;
+    const float MIN_SPEED = 10;
+    const float MAX_SPEED = 20;
 
 	GLuint vertBufferID;
     GLuint vaoID;
